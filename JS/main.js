@@ -1,7 +1,7 @@
 //Angela Koepplinger
 //Visual Frameworks: Term 1209
-// Project 2: Web App Part 2
-//Date: 09/08/12
+// Project 3: Web App Part 3
+//Date: /12
 
 
 //Wait until the DOM is ready.
@@ -114,6 +114,7 @@ window.addEventListener("DOMContentLoaded", function(){
 		for(var i = 0, j=localStorage.length; i<j; i++){ 									//Loop through the local storage and grab the id(key) & associated object(value)
 			if(Number(localStorage.key(i)/1) === Number(localStorage.key(i))) {			//Safari 6 adds info to the local storage, convert strings to numbers to exclude safari storage from our data.
 				var makeli = document.createElement("li");
+				var linksLi = document.createElement("li");	//NEW
 				makeUl.appendChild(makeli);
 				var key = localStorage.key(i);  											//id associated with form submission object
 				var value = localStorage.getItem(key); 										 //the object, in this case: var item{}
@@ -127,11 +128,38 @@ window.addEventListener("DOMContentLoaded", function(){
 					//[x] = key,  [0] = label in array, [1] = value in array.
 					var objSubText = object[x][0]+ " " +object[x][1];	
 					makeSubli.innerHTML = objSubText;	
+					makeSubUl.appendChild(linksLi);	//NEW  edit link & delete link
 				};
-			};	
+			};
+			makeItemLinks(localStorage.key(i), linksLi);	//Create our edit and delete buttons/link for each item in local storage.	
 		};
 		document.body.appendChild(makeDiv);
 	};
+
+	
+//Make Item Links
+//Create the edit and delete links for each stored item when displayed.
+function makeItemLinks(key, linksLi){
+	//add edit single item link
+	var editLink = document.createElement('a');
+	editLink.href = "#";
+	editLink.key = key;
+	var editText = "Edit Task";
+	//editLink.addEventListener("click", editItem);
+	editLink.innerHTML = editText;
+	linksLi.appendChild(editLink);
+
+	var deleteLink = document.createElement("a");
+	deleteLink.href = "#";
+	deleteLink.key = key;
+	var deleteText = "Delete Task";
+	//deleteLink.addEventListener("click", deleteItem);
+	deleteLink.innerHTML = deleteText;
+	linksLi.appendChild(deleteLink);
+
+}
+
+
 
 	function clearLocal(){
 		if(localStorage.length === 0){
