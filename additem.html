@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!--Angela Koepplinger-->
+<!--Visual Frameworks: Term 1209-->
+<!--Project 1: Web App Part 1-->
+
+<html>	
+	<head>
+		<meta charset="UTF-8"/>
+		<meta keywords="Procurement Task, Order management"/>
+		<meta description="Manage Project Orders; POP Requirements; and Closeout Of Tasks." />
+		<meta name="robots" content="index, follow"/>
+		<meta name="viewport" content="user-scalable=no, width=device-width"/>
+		<meta name="HandHeldFriendly" content="True"/>
+		<meta name="MobileOptimized" content= "320"/>
+		<title>Procurement Task</title>
+		<link rel="stylesheet" type="text/css" href="css/styles.css" />
+	</head>
+	<body>
+		<div id="container">
+		<h1>Procurement Task</h1>
+		<nav>
+			<a href="additem.html" id="addNew" style="display:none;">Add New Task</a>
+			<a href="#" id="clearData">Clear Stored Data</a>
+			<a href="#" id="displayData">Display Data</a>
+
+		</nav>
+		<form action="#" method="post" id="procurementTask">
+			<fieldset>
+				<legend>Purchase Requirement</legend>
+				<ul style="list-style-type:none">
+					<li id="purchaseType"><label for="purchaseType">Purchase Type:</label></li>
+					<li><label for="workOrder">Work Order:</label><input type="text" id="workOrder" placeholder="Project Name"/></li>
+					<li><label for="supportSite">Support Site:</label><input type="text" id="supportSite" placeholder="ex. TES"/></li>
+				</ul>
+			</fieldset>
+			<fieldset>
+				<legend>Item Information</legend>
+				<ul style="list-style-type:none">
+					<li id="itemType"><label for="itemType">Item Type:</label></li>
+					<li><label for="asset">Asset?</label></li>
+					<li id="radio"><input type="radio" name="asset" value="Yes" id="yes" /><label for="radio">Yes</label></li>
+					<li id="radio"><input type="radio" name="asset" value="No" id="no" /><label for="radio">No</label></li>
+					<li><label for="manufacturer">Manufacturer:</label><input type="text" id="manufacturer" placeholder="ex. Cisco Systems"/></li>
+					<li><label for="partNumber">Part Number:</label><input type="text" id="partNumber" placeholder="ex. WS-2960"/></li>
+					<li><label for="qty">Qty:</label><input type="number" id="qty" placeholder="ex. 3"/></li>
+				</ul>
+			</fieldset>
+			<fieldset>
+				<legend>Additional Information</legend>
+					<ul style="list-style-type:none">
+						<li><label for="urgency">Urgency:</label><input id="urgency" type="range" min="1" max="10" /></li>
+						<li><input type="checkbox" id="mgmtApproval" value="Yes"/><label for="mgmtApproval">Mgmt Approval</label></li>
+						<li><input type="checkbox" id="rrRequest" value="Yes"/><label for="rrRequest">R&amp;R Request</label></li>
+						<li><label for="requiredByDate">Date Required:</label><input type="date" id="requiredByDate" placeholder="2012-01-01"/></li>
+						<li><label for="completionDate">Date Completed:</label><input type="date" id="completionDate" placeholder="2012-01-01"/></li>
+						<li><label for="notes">Notes:</label><textarea id="notes"></textarea></li>
+						<li><input type="hidden" value="true"/></li>
+
+					</ul>
+			</fieldset>
+		<input type="submit" value="Add Purchase Task" id="submit"/>
+	
+        </form>
+    </div>
+        <script src="js/main.js" type="text/javascript"></script>
+	</body>
+</html>
+					
+
