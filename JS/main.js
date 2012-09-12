@@ -90,7 +90,7 @@ window.addEventListener("DOMContentLoaded", function(){
 			item.urgency 			= ["Urgency:", $("urgency").value];
 			item.mgmtApproval 		= ["Management Approval:", getCheckboxValue("mgmtApproval")];
 			item.rrRequest 			= ["R&R Request:", getCheckboxValue("rrRequest")];
-			item.dateRequired 		= ["Date Required:", $("requiredByDate").value];
+			item.dateRequired 		= ["Date Required:", $("dateRequired").value];
 			item.completionDate		= ["Completion Date:", $("completionDate").value];
 			item.notes			 	= ["Notes:", $("notes").value];
 
@@ -137,28 +137,78 @@ window.addEventListener("DOMContentLoaded", function(){
 	};
 
 	
-//Make Item Links
-//Create the edit and delete links for each stored item when displayed.
-function makeItemLinks(key, linksLi){
-	//add edit single item link
-	var editLink = document.createElement('a');
-	editLink.href = "#";
-	editLink.key = key;
-	var editText = "Edit Task";
-	//editLink.addEventListener("click", editItem);
-	editLink.innerHTML = editText;
-	linksLi.appendChild(editLink);
+	//Make Item Links
+	//Create the edit and delete links for each stored item when displayed.
+	function makeItemLinks(key, linksLi){
+		//add edit single item link
+		var editLink = document.createElement('a');
+		editLink.href = "#";
+		editLink.key = key;
+		var editText = "Edit Task";
+		editLink.addEventListener("click", editItem);
+		editLink.innerHTML = editText;
+		linksLi.appendChild(editLink);
 
-	var deleteLink = document.createElement("a");
-	deleteLink.href = "#";
-	deleteLink.key = key;
-	var deleteText = "Delete Task";
-	//deleteLink.addEventListener("click", deleteItem);
-	deleteLink.innerHTML = deleteText;
-	linksLi.appendChild(deleteLink);
+		//add line break
+		var breakTag = document.createElement("br");
+		linksLi.appendChild(breakTag);
 
-}
+		//add delete single item link
+		var deleteLink = document.createElement("a");
+		deleteLink.href = "#";
+		deleteLink.key = key;
+		var deleteText = "Delete Task";
+		//deleteLink.addEventListener("click", deleteItem);
+		deleteLink.innerHTML = deleteText;
+		linksLi.appendChild(deleteLink);
+	};
 
+
+	function editItem(){
+		//Grab data from our item from Local Storage.
+		var value = localStorage.getItem(this.key);	//this.key = editItem.key, you can use this because this function is tied to the editLink item
+		var item = JSON.parse(value)  //value is = to value of this.key, which is a string
+
+		//show the form
+		toggleControls("off");
+
+		//populate the form fields with current localStorage values.
+		$("list").value 			= item.purchaseType[1];	//index[1] is the value of our items
+		$("workOrder").value 		= item.workOrder[1];
+		$("supportSite").value 		= item.supportSite[1];
+		$("list").value 			= item.itemType[1];
+		var radios = document.forms[0].asset;
+		for(var i=0; i<radios.length; i++){
+			if(radios[i].value == "Yes" && item.asset[1] == "Yes"){
+				radios[i].setAttribute("checked", "checked");
+			} else if(radios[i].value == "No" && item.asset[1] == "No"){
+				radios[i].setAttribute("checked", "checked");
+			};
+		};
+		$("manufacturer").value 	= item.manufacturer[1];
+		$("partNumber").value 		= item.partNumber[1];
+		$("qty").value 				= item.qty[1];
+		$("urgency").value 			= item.urgency[1];
+		if(item.mgmtApproval[1] == "Yes"){
+			$("mgmtApproval").setAttribute("checked", "checked");
+		};
+		if(item.rrRequest[1] == "Yes"){
+			$("rrRequest").setAttribute("checked", "checked");
+		};
+		$("dateRequired").value 	= item.dateRequired[1];
+		$("completionDate").value 	= item.completionDate[1];
+		$("notes").value 			= item.notes[1];
+
+		//Remove the initial listener from the input "save contact" button.
+		save.removeEventListener("click", storeData);
+		//Change Submit Button Value to Edit Button
+		$("submit").value = "Edit Task";
+		var editSubmit = $("submit");
+		//Save the key value established in this function as a property of the editSubmit event
+		//so we can use that value when we save the data we edited.
+		editSubmit.addEventListener("click", validate);
+		editSubmit.key = this.key;
+	};
 
 
 	function clearLocal(){
@@ -172,6 +222,63 @@ function makeItemLinks(key, linksLi){
 		};
 	};
 
+	function validate(e){		//e = event data
+		//Define the elements that we want to check
+		//var getList = $("list");
+		var getWorkOrder = $("workOrder");
+		var getSupportSite = $("supportSite");
+		var getdateRequired =  $("dateRequired");
+
+		//Get Error Messages
+		var messageAray = [];
+		//Group Validation
+		// if(getList.value=="--Choose A Type"){
+		// 	var listError = "Please choose a type";
+		// 	getList.style.border = "1px solid red";
+		// 	messageArray.push(listError);
+		// };
+
+		//Work Order Validation
+		if(getworkOrder.value ==="") {
+			var workOrderError = "Please enter Work Order";
+			getworkOrder.style.border = "1px solid red";
+			messageArray.push(workOrderError);
+		};
+
+		//Support Site Validation
+		if(getsupportSite.value ==="") {
+			var supportSiteError = "Please enter Support Site";
+			getsupportSite.style.border = "1px solid red";
+			messageArray.push(supportSiteError);
+		};
+
+		//Date Required Validation
+		if(getdateRequired.value ==="") {
+			var dateRequiredError = "Please enter Date Required";
+			getdateRequired.style.border = "1px solid red";
+			messageArray.push(dateRequiredError);
+		};
+
+		// email Validation
+		// var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+		// if(!re.exec(getEmail.value))){
+		// 	var emailError = "Please enter valid email address.";
+		// 	getEmail.style.border = "1px solid red";
+		// 	messageArray.push(emailError);
+		// };
+
+		//If there were errors, display them on the screen.
+		if(messageArray.length >= 1){
+			for(var i=0, j = messageArray.length; i<j; i++){
+				var text = document.createEleent("li");
+				text.innerHTML = messageArray[i];
+				errorMsg.appendChild(text);
+			};
+		};
+		e.preventDefault();
+		return false;
+	};
+
 	//Variable defaults
 	var purchaseTypeOptions = ["--Select A Type--", "Maintenance", "Product"];
 	createList("purchaseType", purchaseTypeOptions);
@@ -179,6 +286,7 @@ function makeItemLinks(key, linksLi){
 	createList("itemType", itemTypeOptions);
 	var assetValue;
 	var value;
+	errorMsg = $("errors");
 	
 
 	// Set Link & Submit Click Events
@@ -187,7 +295,7 @@ function makeItemLinks(key, linksLi){
 	var clearData = $('clearData');
 	clearData.addEventListener("click", clearLocal);
 	var save = $("submit");
-	save.addEventListener("click", storeData);
+	save.addEventListener("click", validate);
 });
 
 
