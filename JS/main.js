@@ -227,10 +227,13 @@ window.addEventListener("DOMContentLoaded", function(){
 		//var getList = $("list");
 		var getWorkOrder = $("workOrder");
 		var getSupportSite = $("supportSite");
-		var getdateRequired =  $("dateRequired");
+		var getDateRequired =  $("dateRequired");
+
+		//Reset Error Messages
+		errorMsg.innerHTML = "";
 
 		//Get Error Messages
-		var messageAray = [];
+		var messageArray = [];
 		//Group Validation
 		// if(getList.value=="--Choose A Type"){
 		// 	var listError = "Please choose a type";
@@ -239,23 +242,23 @@ window.addEventListener("DOMContentLoaded", function(){
 		// };
 
 		//Work Order Validation
-		if(getworkOrder.value ==="") {
+		if(getWorkOrder.value ==="") {
 			var workOrderError = "Please enter Work Order";
-			getworkOrder.style.border = "1px solid red";
+			getWorkOrder.style.border = "1px solid red";
 			messageArray.push(workOrderError);
 		};
 
 		//Support Site Validation
-		if(getsupportSite.value ==="") {
+		if(getSupportSite.value ==="") {
 			var supportSiteError = "Please enter Support Site";
-			getsupportSite.style.border = "1px solid red";
+			getSupportSite.style.border = "1px solid red";
 			messageArray.push(supportSiteError);
 		};
 
 		//Date Required Validation
-		if(getdateRequired.value ==="") {
+		if(getDateRequired.value ==="") {
 			var dateRequiredError = "Please enter Date Required";
-			getdateRequired.style.border = "1px solid red";
+			getDateRequired.style.border = "1px solid red";
 			messageArray.push(dateRequiredError);
 		};
 
