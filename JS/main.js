@@ -16,11 +16,11 @@ window.addEventListener("DOMContentLoaded", function(){
 
 
 	//Create select field element and populate with options.
-	function createList(selector, listOptions){
+	function createList(selector, listOptions, id){
 		var formTag = document.getElementsByTagName("form");   //formTag is an array of all of the form tags.
 		var selectLi = $(selector);
 		var makeSelect = document.createElement("select");
-			makeSelect.setAttribute("id", "list");
+			makeSelect.setAttribute("id", id);
 		
 		for(var i=0, j=listOptions.length; i<j; i++){
 			var makeOption = document.createElement("option");
@@ -72,17 +72,25 @@ window.addEventListener("DOMContentLoaded", function(){
 		};
 	};
 	
-	function storeData(){
+	function storeData(key){
+		//If there is no key, this means this is a brand new item and we need a new key
+		if(!key){
 		var id = Math.floor(Math.random()*100000001);
+	} else {
+		//Set the id to the existing key that we're editing so that it will save over the data.
+		//The key is the same key that's been passed along from the editSubmit event handler
+		//to the validate function, and then passed here, into the storeData function.
+		id = key;
+	};
 		//Gather up all of our form field values and store in an object.
 		//Object properties contain array with the form label and input value.
 		getSelectedRadio();
 
 		var item           			= {};
-			item.purchaseType      	= ["Purchase Type:", $("list").value];
+			item.purchaseType      	= ["Purchase Type:", $("purchaseList").value];
 			item.workOrder 			= ["Work Order:", $("workOrder").value];
 			item.supportSite 		= ["Support Site:", $("supportSite").value];
-			item.itemType 			= ["Item Type:", $("list").value];
+			item.itemType 			= ["Item Type:", $("itemList").value];
 			item.asset 				= ["Asset:", assetValue];
 			item.manufacturer 		= ["Manufacturer:", $("manufacturer").value];
 			item.partNumber 		= ["Part Number:", $("partNumber").value];
@@ -103,7 +111,7 @@ window.addEventListener("DOMContentLoaded", function(){
 	function getData(){
 		toggleControls("on");
 		if(localStorage.length ===0){
-			alert("There is no data in Local Storage.")
+			alert("There is no data in Local Storage.");
 		};
 		//Write Data from Local Storage to the browser.
 		var makeDiv = document.createElement("div");
@@ -116,11 +124,11 @@ window.addEventListener("DOMContentLoaded", function(){
 				var makeli = document.createElement("li");
 				var linksLi = document.createElement("li");	//NEW
 				makeUl.appendChild(makeli);
-				var key = localStorage.key(i);  											//id associated with form submission object
-				var value = localStorage.getItem(key); 										 //the object, in this case: var item{}
+				var key = localStorage.key(i);											//id associated with form submission object
+				var value = localStorage.getItem(key);						//the object, in this case: var item{}
 				var object = JSON.parse(value);												//convert string from local storage back into an object using JSON.parse!
 				var makeSubUl = document.createElement("ul");
-				makeli.appendChild(makeSubUl)
+				makeli.appendChild(makeSubUl);
 				for(var x in object){														//example: for "item.purchaseType"(key) in the object
 					var makeSubli = document.createElement("li");
 					makeSubUl.appendChild(makeSubli);
@@ -158,7 +166,7 @@ window.addEventListener("DOMContentLoaded", function(){
 		deleteLink.href = "#";
 		deleteLink.key = key;
 		var deleteText = "Delete Task";
-		//deleteLink.addEventListener("click", deleteItem);
+		deleteLink.addEventListener("click", deleteItem);
 		deleteLink.innerHTML = deleteText;
 		linksLi.appendChild(deleteLink);
 	};
@@ -167,16 +175,16 @@ window.addEventListener("DOMContentLoaded", function(){
 	function editItem(){
 		//Grab data from our item from Local Storage.
 		var value = localStorage.getItem(this.key);	//this.key = editItem.key, you can use this because this function is tied to the editLink item
-		var item = JSON.parse(value)  //value is = to value of this.key, which is a string
+		var item = JSON.parse(value);  //value is = to value of this.key, which is a string
 
 		//show the form
 		toggleControls("off");
 
 		//populate the form fields with current localStorage values.
-		$("list").value 			= item.purchaseType[1];	//index[1] is the value of our items
+		$("purchaseList").value 	= item.purchaseType[1];	//index[1] is the value of our items
 		$("workOrder").value 		= item.workOrder[1];
 		$("supportSite").value 		= item.supportSite[1];
-		$("list").value 			= item.itemType[1];
+		$("itemList").value 		= item.itemType[1];
 		var radios = document.forms[0].asset;
 		for(var i=0; i<radios.length; i++){
 			if(radios[i].value == "Yes" && item.asset[1] == "Yes"){
@@ -210,6 +218,17 @@ window.addEventListener("DOMContentLoaded", function(){
 		editSubmit.key = this.key;
 	};
 
+	function deleteItem(){
+		var ask = confirm("Are you sure you want to delete this contact?");
+		if(ask){
+			localStorage.removeItem(this.key);
+			alert("Contact has been deleted!")
+			window.location.reload();
+		} else {
+			alert("Contact was NOT deleted!")
+		};
+	};
+
 
 	function clearLocal(){
 		if(localStorage.length === 0){
@@ -224,40 +243,51 @@ window.addEventListener("DOMContentLoaded", function(){
 
 	function validate(e){		//e = event data
 		//Define the elements that we want to check
-		//var getList = $("list");
+		var getPurchaseList = $("purchaseList");
+		var getItemList = $("itemList");
 		var getWorkOrder = $("workOrder");
 		var getSupportSite = $("supportSite");
 		var getDateRequired =  $("dateRequired");
 
 		//Reset Error Messages
 		errorMsg.innerHTML = "";
+		getPurchaseList.style.border = "1px solid black";
+		getItemList.style.border = "1px solid black";
+		getWorkOrder.style.border = "1px solid black";
+		getSupportSite.style.border = "1px solid black";
+		getDateRequired.style.border = "1px solid black";
 
 		//Get Error Messages
 		var messageArray = [];
 		//Group Validation
-		// if(getList.value=="--Choose A Type"){
-		// 	var listError = "Please choose a type";
-		// 	getList.style.border = "1px solid red";
-		// 	messageArray.push(listError);
-		// };
+		if(getPurchaseList.value === "--Select A Type--"){
+			var purchaseListError = "Please choose a Purchase Type.";
+			getPurchaseList.style.border = "1px solid red";
+			messageArray.push(purchaseListError);
+		};
+		if(getItemList.value === "--Select A Type--"){
+			var itemListError = "Please choose an Item Type.";
+			getItemList.style.border = "1px solid red";
+			messageArray.push(itemListError);
+		};
 
 		//Work Order Validation
 		if(getWorkOrder.value ==="") {
-			var workOrderError = "Please enter Work Order";
+			var workOrderError = "Please enter Work Order.";
 			getWorkOrder.style.border = "1px solid red";
 			messageArray.push(workOrderError);
 		};
 
 		//Support Site Validation
 		if(getSupportSite.value ==="") {
-			var supportSiteError = "Please enter Support Site";
+			var supportSiteError = "Please enter Support Site.";
 			getSupportSite.style.border = "1px solid red";
 			messageArray.push(supportSiteError);
 		};
 
 		//Date Required Validation
 		if(getDateRequired.value ==="") {
-			var dateRequiredError = "Please enter Date Required";
+			var dateRequiredError = "Please enter Date Required.";
 			getDateRequired.style.border = "1px solid red";
 			messageArray.push(dateRequiredError);
 		};
@@ -273,20 +303,24 @@ window.addEventListener("DOMContentLoaded", function(){
 		//If there were errors, display them on the screen.
 		if(messageArray.length >= 1){
 			for(var i=0, j = messageArray.length; i<j; i++){
-				var text = document.createEleent("li");
+				var text = document.createElement("li");
 				text.innerHTML = messageArray[i];
 				errorMsg.appendChild(text);
 			};
-		};
 		e.preventDefault();
 		return false;
+		} else {
+			//If all is OK, save our data.  Send the key value (which came from the editData function)
+			//Remember this key value was passed through the editSubmit even listener as a property.
+			storeData(this.key);
+		};
 	};
 
 	//Variable defaults
 	var purchaseTypeOptions = ["--Select A Type--", "Maintenance", "Product"];
-	createList("purchaseType", purchaseTypeOptions);
+	createList("purchaseType", purchaseTypeOptions, "purchaseList");
 	var itemTypeOptions = ["--Select A Type--", "Hardware", "Software", "Support Contract"];
-	createList("itemType", itemTypeOptions);
+	createList("itemType", itemTypeOptions, "itemList");
 	var assetValue;
 	var value;
 	errorMsg = $("errors");

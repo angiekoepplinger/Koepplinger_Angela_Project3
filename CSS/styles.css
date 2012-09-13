@@ -88,6 +88,10 @@ input[type=submit]{
 }
 textarea{
 	width: 150px;
+}
+#errors{
+	color: #FF0000;
+	margin-left: 10px;
+	font-size: .8em;
 
 }
-
