@@ -1,7 +1,7 @@
 //Angela Koepplinger
 //Visual Frameworks: Term 1209
 // Project 3: Web App Part 3
-//Date: /12
+//Date: 09/14/12
 
 
 //Wait until the DOM is ready.
